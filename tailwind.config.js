@@ -7,8 +7,20 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      textShadow: {
+        'sm': '0 1px 2px rgba(0, 0, 0, 0.1)',
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.text-shadow-sm': {
+          'text-shadow': '0 1px 2px rgba(0, 0, 0, 0.1)',
+        },
+      })
+    },
+  ],
 }
 
