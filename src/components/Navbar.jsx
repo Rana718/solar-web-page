@@ -10,9 +10,9 @@ const Navbar = () => {
 
   const navLinks = [
     { path: '/', name: 'Home' },
-    { path: '#solutions', name: 'Solutions' },
-    { path: '#about', name: 'About' },
-    { path: '#connect', name: 'Connect' },
+    { path: '#about', name: 'About', offset: -100 },
+    { path: '#solutions', name: 'Solutions', offset: -100 },
+    { path: '#connect', name: 'Connect', offset: -100 }
   ];
 
   return (
@@ -36,6 +36,17 @@ const Navbar = () => {
                 <NavLink
                   key={link.path}
                   to={link.path}
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (link.path.startsWith('#')) {
+                      const element = document.getElementById(link.path.substring(1));
+                      if (element) {
+                        const yOffset = link.offset || 0;
+                        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                      }
+                    }
+                  }}
                   className={({ isActive }) =>
                     `px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive
                       ? 'text-blue-600 dark:text-blue-400'

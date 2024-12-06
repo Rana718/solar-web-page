@@ -1,4 +1,3 @@
-// src/components/Home.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { solar } from '../assets';
@@ -25,7 +24,7 @@ export default function Home() {
                     alt="Solar Panel Background"
                     className="w-full h-full object-cover"
                 />
-                <div className={`absolute inset-0 ${darkMode ? 'bg-black/70' : 'bg-white/30'} backdrop-blur-sm`}></div>
+                <div className={`absolute inset-0 ${darkMode ? 'bg-black/30' : 'bg-white/40'} backdrop-blur-sm`}></div>
             </div>
 
             {/* Content */}
@@ -83,11 +82,17 @@ export default function Home() {
                             <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 Why Choose Solar Trackers?
                             </h2>
-                            <ul className="list-disc list-inside space-y-2">
-                                <li>Up to 45% more energy output compared to fixed panels.</li>
-                                <li>Adaptable and efficient performance, optimized for maximum sunlight capture.</li>
+                            <ul className={`list-disc list-inside space-y-2 ${darkMode
+                                    ? 'text-gray-300'
+                                    : 'text-gray-800 font-medium'
+                                }`}>
+                                <li className="text-shadow-sm">Up to 45% more energy output compared to fixed panels.</li>
+                                <li className="text-shadow-sm">Adaptable and efficient performance, optimized for maximum sunlight capture.</li>
                             </ul>
-                            <p className="mt-4">
+                            <p className={`mt-4 leading-relaxed ${darkMode
+                                    ? 'text-gray-300'
+                                    : 'text-gray-800 font-medium'
+                                } text-shadow-sm`}>
                                 Explore our innovative solutions and join us in building a sustainable future.
                             </p>
                         </motion.div>
