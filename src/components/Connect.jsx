@@ -1,190 +1,124 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion';
 import { SectionWrapper } from '../hooks'
 import { useTheme } from '../context/ThemeContext';
+import { FaXTwitter, FaLinkedin } from "react-icons/fa6";
 
 function Connect() {
     const { darkMode } = useTheme();
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
-
-    const fadeIn = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, ease: "easeOut" }
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form submitted:', formData);
-    };
 
     return (
-        <div className={`w-full ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    variants={fadeIn}
-                    className="text-center mb-16"
-                >
-                    <h1 className={`text-4xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        Let's Connect
-                    </h1>
-                    <p className={`text-lg max-w-2xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        We'd love to hear from you! Contact us for inquiries, quotes, or partnerships.
-                    </p>
-                </motion.div>
+        <footer className={`w-full relative ${darkMode
+            ? 'bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 border-t border-indigo-800/30'
+            : 'bg-gradient-to-b from-slate-100 via-blue-50 to-slate-200 border-t border-blue-200/50'
+            } before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_0%,rgba(0,0,0,0)_100%)] 
+            before:opacity-40 before:pointer-events-none`}>
 
-                <div className="grid md:grid-cols-2 gap-12">
-                    {/* Contact Information */}
+            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                {/* Footer Grid */}
+                <div className="grid md:grid-cols-4 gap-8 mb-8">
+                    
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="space-y-4"
                     >
-                        <div className={`space-y-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                            <div className="space-y-6">
-                                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                    Contact Information
-                                </h2>
-                                <div className="space-y-4">
-                                    <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
-                                    >
-                                        <h3 className="font-semibold">Email</h3>
-                                        <p>support@solartrackerinnovations.com</p>
-                                    </motion.div>
-                                    <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
-                                    >
-                                        <h3 className="font-semibold">Phone</h3>
-                                        <p>+1 (800) 555-TRACK</p>
-                                    </motion.div>
-                                    <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
-                                    >
-                                        <h3 className="font-semibold">Address</h3>
-                                        <p>123 Solar Avenue, Green City, Earth</p>
-                                    </motion.div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                    Follow Us
-                                </h2>
-                                <div className="flex space-x-4">
-                                    <motion.a
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        href="https://twitter.com/SolarTrackerInno"
-                                        target="_blank"
-                                        className={`p-3 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
-                                    >
-                                        Twitter
-                                    </motion.a>
-                                    <motion.a
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        href="https://linkedin.com/company/solar-tracker-innovations"
-                                        target="_blank"
-                                        className={`p-3 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
-                                    >
-                                        LinkedIn
-                                    </motion.a>
-                                </div>
-                            </div>
+                        <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Solar Quest
+                        </h3>
+                        <p className={`${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
+                            Innovating solar energy solutions for a sustainable future.
+                        </p>
+                        <div className={`${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
+                            <p>123 Solar Avenue</p>
+                            <p>Green City, Earth</p>
                         </div>
                     </motion.div>
 
-                    {/* Contact Form */}
+                    
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-8 rounded-lg shadow-lg`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="space-y-4"
                     >
-                        <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                            Send us a Message
-                        </h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label className={`block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    className={`w-full p-3 rounded-lg ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50'
-                                        } border border-gray-300 focus:ring-2 focus:ring-blue-500`}
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className={`block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    required
-                                    className={`w-full p-3 rounded-lg ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50'
-                                        } border border-gray-300 focus:ring-2 focus:ring-blue-500`}
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className={`block mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                    Message
-                                </label>
-                                <textarea
-                                    required
-                                    rows="4"
-                                    className={`w-full p-3 rounded-lg ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50'
-                                        } border border-gray-300 focus:ring-2 focus:ring-blue-500`}
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                ></textarea>
-                            </div>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
+                        <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Quick Links
+                        </h3>
+                        <ul className={`space-y-2 ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
+                            <li><a href="#about" className="hover:text-blue-400 transition-colors">About Us</a></li>
+                            <li><a href="#solutions" className="hover:text-blue-400 transition-colors">Solutions</a></li>
+                            <li><a href="#connect" className="hover:text-blue-400 transition-colors">Contact</a></li>
+                        </ul>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="space-y-4"
+                    >
+                        <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Contact Us
+                        </h3>
+                        <div className={`space-y-2 ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
+                            <p>Email: support@solartrackerinnovations.com</p>
+                            <p>Phone: +1 (800) 555-TRACK</p>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="space-y-4"
+                    >
+                        <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Follow Us
+                        </h3>
+                        <div className="flex space-x-4">
+                            <motion.a
+                                whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
-                                type="submit"
-                                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 
-                                transition-colors duration-300"
+                                href="https://twitter.com/SolarTrackerInno"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`p-3 rounded-full ${darkMode
+                                        ? 'bg-gray-800 hover:bg-gray-700'
+                                        : 'bg-gray-200 hover:bg-gray-300'
+                                    } shadow-lg hover:text-blue-400 transition-all flex items-center justify-center`}
                             >
-                                Send Message
-                            </motion.button>
-                        </form>
+                                <FaXTwitter className="w-5 h-5" />
+                            </motion.a>
+                            <motion.a
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                href="https://linkedin.com/company/solar-tracker-innovations"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`p-3 rounded-full ${darkMode
+                                        ? 'bg-gray-800 hover:bg-gray-700'
+                                        : 'bg-gray-200 hover:bg-gray-300'
+                                    } shadow-lg hover:text-blue-400 transition-all flex items-center justify-center`}
+                            >
+                                <FaLinkedin className="w-5 h-5" />
+                            </motion.a>
+                        </div>
                     </motion.div>
                 </div>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="text-center mt-16"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className={`pt-8 mt-8 border-t ${darkMode ? 'border-gray-800' : 'border-gray-300'
+                        } text-center ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}
                 >
-                    <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        Let's build a sustainable future together!
-                    </h2>
-                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        Join us in our mission to revolutionize solar energy technology.
-                    </p>
+                    <p>© 2024 Solar Quest. All rights reserved.</p>
                 </motion.div>
             </div>
-        </div>
+        </footer>
     );
 }
 
