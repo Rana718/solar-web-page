@@ -5,21 +5,22 @@ import Home from './components/Home';
 import About from './components/About';
 import Solutins from './components/Solutions';
 import Connect from './components/Connect';
-
+import { Suspense } from 'react';
+import Loading from './components/Loading';
 
 const App = () => {
   return (
     <BrowserRouter>
       <div>
-        <div>
-          <Navbar />
-          <Home />
-        </div>
-        <div>
-          <About/>
-          <Solutins/>
-          <Connect/>
-        </div>
+        <Navbar />
+        <Suspense fallback={<Loading />}>
+          <div>
+            <Home />
+            <About />
+            <Solutins />
+            <Connect />
+          </div>
+        </Suspense>
       </div>
     </BrowserRouter>
   );
