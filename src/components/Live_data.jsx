@@ -25,7 +25,30 @@ ChartJS.register(
     Legend
 );
 
+const getTitleAndUnit = (fieldName) => {
+    switch (fieldName) {
+        case 'tem':
+            return { displayTitle: 'Temperature', yAxisLabel: 'Temperature (°C)' };
+        case 'hum':
+            return { displayTitle: 'Humidity', yAxisLabel: 'Humidity (%)' };
+        case 'gps':
+            return { displayTitle: 'GPS', yAxisLabel: 'Location' };
+        case 'rtc':
+            return { displayTitle: 'Real Time Clock', yAxisLabel: 'Time' };
+        case 'azi':
+            return { displayTitle: 'Azimuth Angle', yAxisLabel: 'Angle (°)' };
+        case 'ele':
+            return { displayTitle: 'Elevation', yAxisLabel: 'Angle (°)' };
+        case 'ltr':
+            return { displayTitle: 'Solar Tracking System', yAxisLabel: 'Position' };
+        default:
+            return { displayTitle: 'Temp Gauge', yAxisLabel: 'Value' };
+    }
+};
+
 const ChartCard = ({ id, title, data, darkMode }) => {
+    const { displayTitle, yAxisLabel } = getTitleAndUnit(title);
+
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -35,7 +58,7 @@ const ChartCard = ({ id, title, data, darkMode }) => {
             },
             title: {
                 display: true,
-                text: title,
+                text: displayTitle,
                 color: darkMode ? '#fff' : '#111',
                 font: {
                     size: 16,
@@ -46,6 +69,11 @@ const ChartCard = ({ id, title, data, darkMode }) => {
         scales: {
             y: {
                 beginAtZero: true,
+                title: {
+                    display: true,
+                    text: yAxisLabel,
+                    color: darkMode ? '#9ca3af' : '#4b5563'
+                },
                 ticks: {
                     color: darkMode ? '#9ca3af' : '#4b5563'
                 },
@@ -54,6 +82,11 @@ const ChartCard = ({ id, title, data, darkMode }) => {
                 }
             },
             x: {
+                title: {
+                    display: true,
+                    text: 'Date',
+                    color: darkMode ? '#9ca3af' : '#4b5563'
+                },
                 ticks: {
                     color: darkMode ? '#9ca3af' : '#4b5563',
                     maxRotation: 45,
@@ -139,12 +172,7 @@ export default function LiveData() {
         };
 
         fetchData();
-        const interval = setInterval(fetchData, 15000);
-
-        return () => {
-            isMounted = false;
-            clearInterval(interval);
-        };
+        console.log(charts)
     }, [darkMode]);
 
     if (loading) {
