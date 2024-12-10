@@ -2,7 +2,6 @@ import React from 'react'
 import { motion } from 'framer-motion';
 import { SectionWrapper } from '../hooks'
 import { useTheme } from '../context/ThemeContext';
-import SoilMoistureChart from './SoilMoistureChart'; // Add this import
 
 function Solutions() {
     const { darkMode } = useTheme();
@@ -153,34 +152,6 @@ function Solutions() {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </motion.div>
-
-                {/* Add after comparison table section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="mt-24"
-                >
-                    <h2 className={`text-3xl font-bold mb-6 text-center
-                        ${darkMode ? 'text-white' : 'text-gray-900'}`}
-                    >
-                        Live Performance Monitoring
-                    </h2>
-                    <p className={`text-center mb-12 max-w-2xl mx-auto
-                        ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
-                    >
-                        Track real-time soil moisture data from our active solar installations
-                    </p>
-                    
-                    <div className={`max-w-4xl mx-auto p-6 rounded-2xl shadow-xl
-                        ${darkMode 
-                            ? 'bg-gray-800/50 border border-gray-700' 
-                            : 'bg-white/50 border border-gray-200'}`}
-                    >
-                        <SoilMoistureChart />
                     </div>
                 </motion.div>
 

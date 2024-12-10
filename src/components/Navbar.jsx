@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -7,24 +7,51 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const { darkMode, toggleTheme } = useTheme();
+  const location = useLocation();
 
   const navLinks = [
-    { path: '/', name: 'Home' },
-    { path: '#about', name: 'About', offset: -50 },
-    { path: '#solutions', name: 'Solutions', offset: -50 },
-    { path: '#connect', name: 'Connect', offset: -50 }
+    { path: '/#about', name: 'About', offset: -50 },
+    { path: '/#solutions', name: 'Solutions', offset: -50 },
+    { path: '/#connect', name: 'Connect', offset: -50 },
+    { path: '/live_data', name: 'Live Data' },
   ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      if (location.pathname === '/') {
+        const sections = ['about', 'solutions', 'connect'];
+        for (let section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 100 && rect.bottom >= 100) {
+              setActiveSection(section);
+              break;
+            }
+          }
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location]);
+
+  useEffect(() => {
+    setActiveSection(location.pathname === '/' ? '' : location.pathname.slice(1));
+  }, [location]);
+
 
   const handleNavClick = (path, offset = 0) => {
     setIsOpen(false);
     if (path === '/') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    } else if (path.startsWith('#')) {
-      const element = document.getElementById(path.substring(1));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (path.startsWith('/#')) {
+      const section = path.substring(2);
+      const element = document.getElementById(section);
       if (element) {
         const y = element.getBoundingClientRect().top + window.pageYOffset + offset;
         window.scrollTo({ top: y, behavior: 'smooth' });
@@ -32,13 +59,14 @@ const Navbar = () => {
     }
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const isLinkActive = (path) => {
+    if (path === '/live_data') {
+      return location.pathname === '/live_data';
+    }
+    return path === `/#${activeSection}`;
+  };
+
+
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled
@@ -52,7 +80,7 @@ const Navbar = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center"
-            onClick={()=>handleNavClick('/')}
+            onClick={() => handleNavClick('/')}
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -89,9 +117,9 @@ const Navbar = () => {
                     onClick={() => handleNavClick(link.path, link.offset)}
                     className={({ isActive }) =>
                       `relative px-4 py-2 text-sm font-medium transition-all duration-200 rounded-md
-                      ${isActive
+                      ${isLinkActive(link.path)
                         ? `${darkMode ? 'text-blue-400' : 'text-blue-600'}`
-                        : `${darkMode ? 'text-white' : 'text-gray-900'} hover:text-blue-500`
+                        : `${darkMode ? 'text-gray-300' : 'text-gray-600'} hover:text-blue-500`
                       }
                       before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full 
                       before:h-0.5 before:bg-blue-500 before:transform before:scale-x-0 
@@ -193,7 +221,7 @@ const Navbar = () => {
                         onClick={() => handleNavClick(link.path, link.offset)}
                         className={({ isActive }) =>
                           `block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 
-                          ${isActive
+                          ${isLinkActive(link.path)
                             ? `${darkMode
                               ? 'text-blue-400 bg-gray-800/50'
                               : 'text-blue-600 bg-blue-50'}`
@@ -231,7 +259,7 @@ const Navbar = () => {
                           ? 'bg-gray-800 text-white hover:bg-gray-700'
                           : 'bg-gray-50 text-gray-900 hover:bg-gray-100'}
                           transition-all duration-200 flex items-center justify-between`
-                        }
+                      }
                     >
                       <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
                       <span className="text-xl">{darkMode ? '🌞' : '🌜'}</span>
