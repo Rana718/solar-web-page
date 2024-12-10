@@ -135,19 +135,21 @@ export default function LiveData() {
                 const response = await fetch(
                     `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=100`
                 );
-
+        
                 if (!response.ok) throw new Error('Network response was not ok');
                 if (!isMounted) return;
-
+        
                 const data = await response.json();
-
+        
                 const chartData = [];
+                const feeds = data.feeds.slice(-25); 
+        
                 for (let i = 1; i <= 8; i++) {
                     const fieldData = {
-                        labels: data.feeds.map(feed => new Date(feed.created_at).toLocaleTimeString()),
+                        labels: feeds.map(feed => new Date(feed.created_at).toLocaleTimeString()),
                         datasets: [{
                             label: data.channel[`field${i}`],
-                            data: data.feeds.map(feed => feed[`field${i}`]),
+                            data: feeds.map(feed => feed[`field${i}`]),
                             borderColor: darkMode ? '#60a5fa' : '#3b82f6',
                             backgroundColor: darkMode ? 'rgba(96, 165, 250, 0.1)' : 'rgba(59, 130, 246, 0.1)',
                             tension: 0.4,
@@ -159,7 +161,7 @@ export default function LiveData() {
                         data: fieldData
                     });
                 }
-
+        
                 setCharts(chartData);
                 setLoading(false);
             } catch (err) {
