@@ -28,21 +28,21 @@ ChartJS.register(
 const getTitleAndUnit = (fieldName) => {
     switch (fieldName) {
         case 'tem':
-            return { displayTitle: 'Temperature', yAxisLabel: 'Temperature (°C)' };
+            return { displayTitle: 'TEMPERATURE', yAxisLabel: 'Temperature (°C)' };
         case 'hum':
-            return { displayTitle: 'Humidity', yAxisLabel: 'Humidity (%)' };
+            return { displayTitle: 'HUMIDITY', yAxisLabel: 'Humidity (%)' };
         case 'gps':
             return { displayTitle: 'GPS', yAxisLabel: 'Location' };
         case 'rtc':
-            return { displayTitle: 'Real Time Clock', yAxisLabel: 'Time' };
+            return { displayTitle: 'REAL TIME CLOCK', yAxisLabel: 'Time' };
         case 'azi':
-            return { displayTitle: 'Azimuth Angle', yAxisLabel: 'Angle (°)' };
+            return { displayTitle: 'AZIMUTH ANGLE', yAxisLabel: 'Angle (°)' };
         case 'ele':
-            return { displayTitle: 'Elevation', yAxisLabel: 'Angle (°)' };
+            return { displayTitle: 'ELEVATION', yAxisLabel: 'Angle (°)' };
         case 'ltr':
-            return { displayTitle: 'Solar Tracking System', yAxisLabel: 'Position' };
+            return { displayTitle: 'LTR SYSTEM', yAxisLabel: 'Position' };
         default:
-            return { displayTitle: 'Temp Gauge', yAxisLabel: 'Value' };
+            return { displayTitle: 'TEMP GAUGE', yAxisLabel: 'Value' };
     }
 };
 
@@ -103,10 +103,9 @@ const ChartCard = ({ id, title, data, darkMode }) => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-xl shadow-lg ${darkMode
-                    ? 'bg-gray-800/50 border border-gray-700'
-                    : 'bg-white/50 border border-gray-200'
-                }`}
+            className={`p-4 rounded-xl shadow-lg ${
+                darkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-white/50 border border-gray-200'
+            }`}
             style={{ height: '300px' }}
         >
             <Line
@@ -135,21 +134,22 @@ export default function LiveData() {
                 const response = await fetch(
                     `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${apiKey}&results=100`
                 );
-        
+
                 if (!response.ok) throw new Error('Network response was not ok');
                 if (!isMounted) return;
-        
+
                 const data = await response.json();
-        
+
                 const chartData = [];
-                const feeds = data.feeds.slice(-25); 
-        
+                const feeds = data.feeds.slice(-25);
+
                 for (let i = 1; i <= 8; i++) {
+                    const fieldName = `field${i}`;
                     const fieldData = {
                         labels: feeds.map(feed => new Date(feed.created_at).toLocaleTimeString()),
                         datasets: [{
-                            label: data.channel[`field${i}`],
-                            data: feeds.map(feed => feed[`field${i}`]),
+                            label: data.channel[fieldName],
+                            data: feeds.map(feed => feed[fieldName]),
                             borderColor: darkMode ? '#60a5fa' : '#3b82f6',
                             backgroundColor: darkMode ? 'rgba(96, 165, 250, 0.1)' : 'rgba(59, 130, 246, 0.1)',
                             tension: 0.4,
@@ -157,11 +157,11 @@ export default function LiveData() {
                         }]
                     };
                     chartData.push({
-                        title: data.channel[`field${i}`],
+                        title: data.channel[fieldName],
                         data: fieldData
                     });
                 }
-        
+
                 setCharts(chartData);
                 setLoading(false);
             } catch (err) {
@@ -174,13 +174,13 @@ export default function LiveData() {
         };
 
         fetchData();
-        console.log(charts)
+        
     }, [darkMode]);
 
     if (loading) {
         return (
             <div className={`min-h-screen pt-20 ${darkMode ? 'bg-slate-900' : 'bg-slate-50'} 
-        flex items-center justify-center`}>
+            flex items-center justify-center`}>
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -193,7 +193,7 @@ export default function LiveData() {
     if (error) {
         return (
             <div className={`min-h-screen pt-20 ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-50 text-black'}
-        flex items-center justify-center`}>
+            flex items-center justify-center`}>
                 <p>{error}</p>
             </div>
         );
@@ -207,15 +207,16 @@ export default function LiveData() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <h1 className={`text-4xl font-bold mb-6 
-            ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <h1 className={`text-4xl font-bold mb-6 ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
                         Live Solar Performance Data
                     </h1>
                     <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         Real-time monitoring of our solar tracking systems
                     </p>
                 </motion.div>
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {charts.map((chart, index) => (
                         <ChartCard
