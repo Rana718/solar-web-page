@@ -25,6 +25,21 @@ ChartJS.register(
     Legend
 );
 
+const getThresholds = (fieldName) => {
+    switch (fieldName) {
+        case 'tem':
+            return { min: 10, max: 45 };
+        case 'hum':
+            return { min: 20, max: 80 };
+        case 'azi':
+            return { min: 0, max: 360 };
+        case 'ele':
+            return { min: 0, max: 90 }; 
+        default:
+            return { min: -Infinity, max: Infinity };
+    }
+};
+
 const getTitleAndUnit = (fieldName) => {
     switch (fieldName) {
         case 'tem':
@@ -46,7 +61,7 @@ const getTitleAndUnit = (fieldName) => {
     }
 };
 
-const ChartCard = ({ id, title, data, darkMode }) => {
+const ChartCard = ({ id, title, data, darkMode, average, alert }) => {
     const { displayTitle, yAxisLabel } = getTitleAndUnit(title);
 
     const chartOptions = {
@@ -103,11 +118,21 @@ const ChartCard = ({ id, title, data, darkMode }) => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-xl shadow-lg ${
+            className={`p-4 rounded-xl shadow-lg relative ${
                 darkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-white/50 border border-gray-200'
             }`}
             style={{ height: '300px' }}
         >
+            {alert && (
+                <div className="absolute top-2 right-2 z-10 bg-red-500 text-white px-3 py-1 rounded-full text-sm">
+                    {alert}
+                </div>
+            )}
+            {average !== null && (
+                <div className={`absolute top-2 left-2 z-10 ${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm`}>
+                    Avg: {average.toFixed(2)}
+                </div>
+            )}
             <Line
                 data={data}
                 options={chartOptions}
@@ -120,11 +145,42 @@ const ChartCard = ({ id, title, data, darkMode }) => {
 export default function LiveData() {
     const { darkMode } = useTheme();
     const [charts, setCharts] = useState([]);
+    const [averages, setAverages] = useState({});
+    const [alerts, setAlerts] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const channelId = '2742897';
     const apiKey = import.meta.env.API_KEY;
+
+    const checkForAnomalies = (fieldName, values) => {
+        if (!values || values.length === 0) return "No data available";
+        
+        const numbers = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+        if (numbers.length === 0) return "Invalid data";
+
+        const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+        const thresholds = getThresholds(fieldName);
+        
+        // Special handling for azimuth angle
+        if (fieldName === 'azi') {
+            for (let i = 1; i < numbers.length; i++) {
+                if (numbers[i] === numbers[i - 1]) {
+                    return "Unusual variation detected - Static angle";
+                }
+            }
+        }
+        
+        if (avg < thresholds.min) return `Value too low (${avg.toFixed(2)})`;
+        if (avg > thresholds.max) return `Value too high (${avg.toFixed(2)})`;
+        
+        const latestValue = numbers[numbers.length - 1];
+        if(fieldName !== 'azi'){
+            if (Math.abs(latestValue - avg) > avg * 0.5) return `Unusual variation detected`;
+        }
+        
+        return null;
+    };
 
     useEffect(() => {
         let isMounted = true;
@@ -141,15 +197,24 @@ export default function LiveData() {
                 const data = await response.json();
 
                 const chartData = [];
+                const newAverages = {};
+                const newAlerts = {};
                 const feeds = data.feeds.slice(-25);
 
                 for (let i = 1; i <= 8; i++) {
                     const fieldName = `field${i}`;
+                    const values = feeds.map(feed => feed[fieldName]);
+                    const numbers = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+                    const average = numbers.length > 0 ? numbers.reduce((a, b) => a + b, 0) / numbers.length : null;
+                    
+                    newAverages[data.channel[fieldName]] = average;
+                    newAlerts[data.channel[fieldName]] = checkForAnomalies(data.channel[fieldName], values);
+
                     const fieldData = {
                         labels: feeds.map(feed => new Date(feed.created_at).toLocaleTimeString()),
                         datasets: [{
                             label: data.channel[fieldName],
-                            data: feeds.map(feed => feed[fieldName]),
+                            data: values,
                             borderColor: darkMode ? '#60a5fa' : '#3b82f6',
                             backgroundColor: darkMode ? 'rgba(96, 165, 250, 0.1)' : 'rgba(59, 130, 246, 0.1)',
                             tension: 0.4,
@@ -163,6 +228,8 @@ export default function LiveData() {
                 }
 
                 setCharts(chartData);
+                setAverages(newAverages);
+                setAlerts(newAlerts);
                 setLoading(false);
             } catch (err) {
                 if (isMounted) {
@@ -174,7 +241,12 @@ export default function LiveData() {
         };
 
         fetchData();
-        
+        const interval = setInterval(fetchData, 30000);
+
+        return () => {
+            isMounted = false;
+            clearInterval(interval);
+        };
     }, [darkMode]);
 
     if (loading) {
@@ -225,6 +297,8 @@ export default function LiveData() {
                             title={chart.title}
                             data={chart.data}
                             darkMode={darkMode}
+                            average={averages[chart.title]}
+                            alert={alerts[chart.title]}
                         />
                     ))}
                 </div>
